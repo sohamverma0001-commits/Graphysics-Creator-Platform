@@ -90,7 +90,7 @@ SETUP-GUIDE.txt            This guide
 
 VISUAL WEBSITE EDITOR (OPTIONAL)
 1. Run visual-editor-schema.sql in Supabase SQL Editor after the main schema.
-2. Before running it, replace REPLACE_WITH_YOUR_LOGIN_EMAIL with the exact email used for your Graphysics account. Keep the single quotes.
+2. Before running it, replace  with the exact email used for your Graphysics account. Keep the single quotes.
 3. Upload editor.html, editor.css, editor.js, and site-settings.js to the GitHub repository (keep the assets files inside ).
 4. The editor is at https://YOUR-USERNAME.github.io/YOUR-REPOSITORY/editor.html
 5. Sign in using your Graphysics account. Change homepage text, colours, hero image URL and section order/visibility, preview, then Publish Changes.
