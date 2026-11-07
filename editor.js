@@ -1,0 +1,27 @@
+(()=>{
+ const cfg=window.GRAPHYSICS_CONFIG||{},ready=!!(window.supabase&&cfg.SUPABASE_URL&&!cfg.SUPABASE_URL.includes('YOUR_')&&cfg.SUPABASE_ANON_KEY&&!cfg.SUPABASE_ANON_KEY.includes('YOUR_'));
+ const $=id=>document.getElementById(id);let db=null,dragged=null;
+ const defaults={eyebrow:'THE CREATIVE COMMUNITY',heroTitle:'Ideas deserve\nto be seen.',heroSubtitle:'Discover standout design, meet independent creators and turn your next big idea into something real.',buttonText:'Explore creative work',primary:'#9b7cff',accent:'#f4a6ff',background:'#171329',heroImage:'',hiddenSections:[],sectionOrder:[['home','Hero'],['stats','Quick highlights'],['discover','Discover feed'],['creators','Creator spotlight'],['directory','Creator directory'],['services','Services'],['cta','Join Graphysics']]};
+ let settings={...defaults};
+ function message(id,text,isError=false){$(id).textContent=text;$(id).style.color=isError?'#ff9aab':'#c8b8ff';}
+ function renderSections(){ $('sectionList').innerHTML=defaults.sectionOrder.map(([id,label])=>`<div class="section-row" draggable="true" data-section="${id}"><span class="grip">⠿</span><span>${label}</span><input type="checkbox" aria-label="Show ${label}" data-visible="${id}" ${settings.hiddenSections.includes(id)?'':'checked'}></div>`).join('');
+  document.querySelectorAll('.section-row').forEach(row=>{row.addEventListener('dragstart',()=>{dragged=row;row.classList.add('dragging')});row.addEventListener('dragend',()=>{row.classList.remove('dragging');dragged=null;readOrder()});row.addEventListener('dragover',e=>{e.preventDefault();if(dragged&&dragged!==row){const r=row.getBoundingClientRect();row.parentNode.insertBefore(dragged,e.clientY<r.top+r.height/2?row:row.nextSibling)}})});
+  document.querySelectorAll('[data-visible]').forEach(c=>c.addEventListener('change',readHidden));
+ }
+ function readOrder(){settings.sectionOrder=[...document.querySelectorAll('.section-row')].map(x=>x.dataset.section);}
+ function readHidden(){settings.hiddenSections=[...document.querySelectorAll('[data-visible]:not(:checked)')].map(x=>x.dataset.visible);}
+ function collect(){settings.eyebrow=$('eyebrow').value.trim();settings.heroTitle=$('heroTitle').value.trim();settings.heroSubtitle=$('heroSubtitle').value.trim();settings.buttonText=$('buttonText').value.trim();settings.primary=$('primary').value;settings.accent=$('accent').value;settings.background=$('background').value;settings.heroImage=$('heroImage').value.trim();readOrder();readHidden();return settings;}
+ function fill(){['eyebrow','heroTitle','heroSubtitle','buttonText','primary','accent','background','heroImage'].forEach(k=>$(k).value=settings[k]??'');$('heroTitle').value=(settings.heroTitle||'').replace(/<br\s*\/?\s*>/gi,'\n');renderSections();preview();}
+ function preview(){const x=collect();$('previewEyebrow').textContent=x.eyebrow;$('previewTitle').innerHTML=esc(x.heroTitle).split('\n').map((line,i,a)=>i===a.length-1?'<span style=\"background:linear-gradient(90deg,#b9a2ff,#f4a6ff);-webkit-background-clip:text;color:transparent\">'+line+'</span>':line).join('<br>');$('previewSubtitle').textContent=x.heroSubtitle;$('previewButton').textContent=x.buttonText+' ↗';$('previewHero').style.background=x.background;$('previewButton').style.background=x.primary;$('previewButton').style.color=x.background;}
+ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ async function load(){const {data,error}=await db.from('site_settings').select('settings').eq('id','homepage').maybeSingle();if(error){message('saveMessage','Could not load settings: '+error.message,true);return;}if(data?.settings)settings={...defaults,...data.settings};fill();}
+ async function publish(){collect();$('publishBtn').disabled=true;message('saveMessage','Publishing your changes…');const {error}=await db.from('site_settings').update({settings,updated_at:new Date().toISOString()}).eq('id','homepage');$('publishBtn').disabled=false;if(error){message('saveMessage','Could not publish: '+error.message+'. Check the owner email in visual-editor-schema.sql and confirm you are signed in with that account.',true);return;}message('saveMessage','Published! Refresh the Graphysics homepage to see your changes.');}
+ document.addEventListener('DOMContentLoaded',async()=>{
+  if(!ready){message('loginMessage','First connect Supabase in assets/config.js, then reload this page.',true);$('editorLogin').querySelector('button').disabled=true;return;}
+  db=window.supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_ANON_KEY);
+  $('editorLogin').addEventListener('submit',async e=>{e.preventDefault();message('loginMessage','Signing in…');const {error}=await db.auth.signInWithPassword({email:$('editorEmail').value.trim(),password:$('editorPassword').value});if(error){message('loginMessage',error.message,true);return;}const {data:sessionData}=await db.auth.getSession();if(!sessionData.session){message('loginMessage','Sign-in incomplete. Check email verification and try again.',true);return;}$('loginPanel').classList.add('hidden');$('editorApp').classList.remove('hidden');await load();});
+  $('previewBtn').onclick=preview;$('publishBtn').onclick=publish;
+  ['eyebrow','heroTitle','heroSubtitle','buttonText','primary','accent','background','heroImage'].forEach(id=>$(id).addEventListener('input',preview));
+  const {data}=await db.auth.getSession();if(data.session){$('loginPanel').classList.add('hidden');$('editorApp').classList.remove('hidden');await load();}
+ });
+})();

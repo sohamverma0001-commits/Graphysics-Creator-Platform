@@ -86,3 +86,13 @@ assets/app.js              Front-end logic
 assets/config.js           Supabase project configuration placeholders
 supabase-schema.sql        Database tables, RLS policies, storage bucket and signup trigger
 SETUP-GUIDE.txt            This guide
+
+
+VISUAL WEBSITE EDITOR (OPTIONAL)
+1. Run visual-editor-schema.sql in Supabase SQL Editor after the main schema.
+2. Before running it, replace REPLACE_WITH_YOUR_LOGIN_EMAIL with the exact email used for your Graphysics account. Keep the single quotes.
+3. Upload editor.html, assets/editor.css, assets/editor.js, and assets/site-settings.js to the GitHub repository (keep the assets files inside assets/).
+4. The editor is at https://YOUR-USERNAME.github.io/YOUR-REPOSITORY/editor.html
+5. Sign in using your Graphysics account. Change homepage text, colours, hero image URL and section order/visibility, preview, then Publish Changes.
+6. The public homepage reads the shared settings from Supabase. This edits homepage settings only; it does not let visitors edit the site.
+SECURITY: Never place a Supabase service-role key in browser code. The SQL policy grants publish permission only to the email you specify.
