@@ -1,0 +1,88 @@
+GRAPHYSICS CREATOR PLATFORM — DEPLOYMENT & BACKEND GUIDE
+=======================================================
+
+WHAT IS INCLUDED
+----------------
+- A responsive creative-discovery website inspired by common portfolio/community patterns: project feed, search, category filters, creator directory, project detail cards, and save-to-this-device.
+- Creator Studio: creator sign-up/login, editable public profile, image upload, project publishing, and an enquiries inbox.
+- Client accounts: sign up/login and send project enquiries to creators.
+- Supabase database, authentication and image storage integration.
+- Demo mode: sample projects and sample creator cards appear before Supabase is connected.
+
+IMPORTANT FUNCTIONALITY NOTE
+----------------------------
+The front end is ready, but real accounts, shared profiles, image uploads and enquiries require you to connect your own Supabase project using the steps below. Without that connection, the website intentionally runs in demo/preview mode. The included SQL creates the tables, access rules and portfolio image bucket.
+
+This is an early marketplace prototype, not a complete commercial marketplace. It does not process payments, provide escrow, real-time chat, contracts, identity verification, moderation queues, dispute resolution, or automatic email notifications. The Save project button saves only in the current browser/device. Do not advertise sample profiles or sample projects as real people or client work.
+
+PART A — CREATE THE BACKEND WITH SUPABASE
+-----------------------------------------
+1. Visit https://supabase.com and create an account.
+2. Create a new project. Choose a project name such as Graphysics and a strong database password. Keep the password private.
+3. Wait for the project to finish provisioning.
+4. In the Supabase dashboard, open SQL Editor.
+5. Open the file supabase-schema.sql from this download. Copy the entire file, paste it into a new SQL query, and press Run.
+6. Check that the query completes without an error. It creates profiles, projects and enquiries tables, security policies, a profile-on-sign-up trigger, and the public portfolio-images storage bucket.
+7. In Supabase, open Project Settings > API (or API Keys, depending on dashboard layout).
+8. Copy the Project URL and the publishable/anon public key. Never copy or use the service_role/secret key in a browser website.
+9. Open assets/config.js in a text editor.
+10. Replace YOUR_SUPABASE_PROJECT_URL with your Project URL, and YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY with the publishable/anon key. Keep the quotation marks. Save the file.
+11. In Supabase Authentication settings, set the Site URL to your deployed website URL after deployment. Add that same URL to the allowed redirect URLs. For local testing, you can temporarily add http://localhost:8000.
+12. Keep email confirmation enabled for a public website. New users may need to verify their email before logging in.
+
+PART B — TEST THE WEBSITE ON YOUR DEVICE/COMPUTER
+--------------------------------------------------
+1. Open the website after connecting Supabase.
+2. Choose Join Graphysics > Create account.
+3. For a creator account, choose “Creator — showcase my work”. Use an email you control and a strong unique password.
+4. Verify your email if Supabase asks you to.
+5. Log in. Creator accounts open Creator Studio.
+6. In Profile, add a display name, specialty, short bio, location and optional portfolio/social link. Save profile.
+7. Open Add a project. Enter a title, choose a category, write a description and upload a JPG, PNG or WebP image up to 5 MB. Press Publish project.
+8. The published project should appear in the public Discover feed. The creator should appear in the creator directory.
+9. To test hiring, create a second account and select “Client — discover and hire”. Open a real creator's project/profile and send an enquiry. The creator can view it in Creator Studio > Enquiries.
+
+PART C — DEPLOY TO GITHUB + CLOUDFLARE PAGES
+--------------------------------------------
+1. Download and extract the Graphysics_Creator_Platform.zip file.
+2. Visit https://github.com and sign in/create an account.
+3. Create a new repository. Name it Graphysics-Creator-Platform. Public or private both work with Cloudflare Pages Git integration.
+4. Upload the CONTENTS of the extracted Graphysics_Creator_Platform folder to the repository root. Do not upload only the outer folder: index.html must be at the repository root, alongside assets/ and supabase-schema.sql.
+5. Commit the uploaded files.
+6. Visit https://dash.cloudflare.com and sign in/create an account.
+7. Open Workers & Pages > Create application > Pages > Connect to Git.
+8. Connect GitHub and authorize Cloudflare. Select the Graphysics-Creator-Platform repository.
+9. In build settings use:
+   - Production branch: main
+   - Framework preset: None
+   - Build command: leave blank
+   - Build output directory: . (the repository root)
+10. Press Save and Deploy. Cloudflare will provide a pages.dev website address.
+11. Return to Supabase Authentication URL settings. Set Site URL to the exact Cloudflare pages.dev address and add it to allowed redirect URLs. Save.
+12. Open your live website and test creator sign-up, email verification, login, profile save, project image upload, and client enquiry.
+
+PART D — HOW TO EDIT AND UPDATE THE LIVE WEBSITE
+------------------------------------------------
+1. Open your GitHub repository.
+2. Open the file you want to edit (index.html, assets/style.css, assets/app.js or assets/config.js).
+3. Use the pencil/edit control in GitHub, make the change, and commit it. For larger edits, upload the updated file from your device and replace the old version.
+4. Cloudflare Pages automatically redeploys after a commit to the production branch.
+5. Refresh the live website after deployment completes. Your URL remains the same.
+
+SECURITY & SAFETY NOTES
+-----------------------
+- The Supabase publishable/anon key is intended for browser use; the service_role key is secret and must never be put in assets/config.js, GitHub, or any public file.
+- The SQL uses Row Level Security so creators can manage only their own profile/projects and only read enquiries addressed to them. Public visitors can read public creator profiles and published projects.
+- The portfolio image bucket is public so public project images can be viewed. Uploads are restricted to each signed-in user's own folder and to image types/size set in SQL.
+- This prototype has no payment processing. Do not ask users to send money through the website.
+- Because this is a public creator marketplace, do not publish personal phone numbers, home addresses, school details or other private information. If you are under 18, involve a parent/guardian or trusted adult before dealing with unknown clients, sharing contact details, agreeing to work, or handling payments. Keep initial communication on-platform where possible.
+- Before launching publicly, add moderation/reporting, privacy policy, terms, account deletion, spam protection, backups, and adult review. Test security policies with separate creator and client accounts.
+
+FILES
+-----
+index.html                 Main website
+assets/style.css           Responsive design and styling
+assets/app.js              Front-end logic
+assets/config.js           Supabase project configuration placeholders
+supabase-schema.sql        Database tables, RLS policies, storage bucket and signup trigger
+SETUP-GUIDE.txt            This guide
