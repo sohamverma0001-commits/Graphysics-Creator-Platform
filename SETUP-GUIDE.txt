@@ -25,7 +25,7 @@ PART A — CREATE THE BACKEND WITH SUPABASE
 6. Check that the query completes without an error. It creates profiles, projects and enquiries tables, security policies, a profile-on-sign-up trigger, and the public portfolio-images storage bucket.
 7. In Supabase, open Project Settings > API (or API Keys, depending on dashboard layout).
 8. Copy the Project URL and the publishable/anon public key. Never copy or use the service_role/secret key in a browser website.
-9. Open assets/config.js in a text editor.
+9. Open config.js in a text editor.
 10. Replace YOUR_SUPABASE_PROJECT_URL with your Project URL, and YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY with the publishable/anon key. Keep the quotation marks. Save the file.
 11. In Supabase Authentication settings, set the Site URL to your deployed website URL after deployment. Add that same URL to the allowed redirect URLs. For local testing, you can temporarily add http://localhost:8000.
 12. Keep email confirmation enabled for a public website. New users may need to verify their email before logging in.
@@ -47,7 +47,7 @@ PART C — DEPLOY TO GITHUB + CLOUDFLARE PAGES
 1. Download and extract the Graphysics_Creator_Platform.zip file.
 2. Visit https://github.com and sign in/create an account.
 3. Create a new repository. Name it Graphysics-Creator-Platform. Public or private both work with Cloudflare Pages Git integration.
-4. Upload the CONTENTS of the extracted Graphysics_Creator_Platform folder to the repository root. Do not upload only the outer folder: index.html must be at the repository root, alongside assets/ and supabase-schema.sql.
+4. Upload the CONTENTS of the extracted Graphysics_Creator_Platform folder to the repository root. Do not upload only the outer folder: index.html must be at the repository root, alongside  and supabase-schema.sql.
 5. Commit the uploaded files.
 6. Visit https://dash.cloudflare.com and sign in/create an account.
 7. Open Workers & Pages > Create application > Pages > Connect to Git.
@@ -64,14 +64,14 @@ PART C — DEPLOY TO GITHUB + CLOUDFLARE PAGES
 PART D — HOW TO EDIT AND UPDATE THE LIVE WEBSITE
 ------------------------------------------------
 1. Open your GitHub repository.
-2. Open the file you want to edit (index.html, assets/style.css, assets/app.js or assets/config.js).
+2. Open the file you want to edit (index.html, style.css, app.js or config.js).
 3. Use the pencil/edit control in GitHub, make the change, and commit it. For larger edits, upload the updated file from your device and replace the old version.
 4. Cloudflare Pages automatically redeploys after a commit to the production branch.
 5. Refresh the live website after deployment completes. Your URL remains the same.
 
 SECURITY & SAFETY NOTES
 -----------------------
-- The Supabase publishable/anon key is intended for browser use; the service_role key is secret and must never be put in assets/config.js, GitHub, or any public file.
+- The Supabase publishable/anon key is intended for browser use; the service_role key is secret and must never be put in config.js, GitHub, or any public file.
 - The SQL uses Row Level Security so creators can manage only their own profile/projects and only read enquiries addressed to them. Public visitors can read public creator profiles and published projects.
 - The portfolio image bucket is public so public project images can be viewed. Uploads are restricted to each signed-in user's own folder and to image types/size set in SQL.
 - This prototype has no payment processing. Do not ask users to send money through the website.
@@ -81,9 +81,9 @@ SECURITY & SAFETY NOTES
 FILES
 -----
 index.html                 Main website
-assets/style.css           Responsive design and styling
-assets/app.js              Front-end logic
-assets/config.js           Supabase project configuration placeholders
+style.css           Responsive design and styling
+app.js              Front-end logic
+config.js           Supabase project configuration placeholders
 supabase-schema.sql        Database tables, RLS policies, storage bucket and signup trigger
 SETUP-GUIDE.txt            This guide
 
@@ -91,7 +91,7 @@ SETUP-GUIDE.txt            This guide
 VISUAL WEBSITE EDITOR (OPTIONAL)
 1. Run visual-editor-schema.sql in Supabase SQL Editor after the main schema.
 2. Before running it, replace REPLACE_WITH_YOUR_LOGIN_EMAIL with the exact email used for your Graphysics account. Keep the single quotes.
-3. Upload editor.html, assets/editor.css, assets/editor.js, and assets/site-settings.js to the GitHub repository (keep the assets files inside assets/).
+3. Upload editor.html, editor.css, editor.js, and site-settings.js to the GitHub repository (keep the assets files inside ).
 4. The editor is at https://YOUR-USERNAME.github.io/YOUR-REPOSITORY/editor.html
 5. Sign in using your Graphysics account. Change homepage text, colours, hero image URL and section order/visibility, preview, then Publish Changes.
 6. The public homepage reads the shared settings from Supabase. This edits homepage settings only; it does not let visitors edit the site.
